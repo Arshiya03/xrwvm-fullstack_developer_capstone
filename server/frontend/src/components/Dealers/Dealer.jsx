@@ -15,6 +15,9 @@ const Dealer = () => {
   const [reviews, setReviews] = useState([]);
   const [unreviewed, setUnreviewed] = useState(false);
   const [postReview, setPostReview] = useState(<></>)
+  const [loadingReviews, setLoadingReviews] = useState(true);
+  const [reviewPosted, setReviewPosted] = useState(false); // Add reviewPosted state
+
 
   let curr_url = window.location.href;
   let root_url = curr_url.substring(0,curr_url.indexOf("dealer"));
@@ -31,12 +34,17 @@ const Dealer = () => {
     const retobj = await res.json();
     
     if(retobj.status === 200) {
-      let dealerobjs = Array.from(retobj.dealer)
-      setDealer(dealerobjs[0])
+      let dealerObj = retobj.dealer;
+            if (Array.isArray(dealerObj)) {
+                setDealer(dealerObj[0]);
+            } else {
+                setDealer(dealerObj);
+            }
     }
   }
 
   const get_reviews = async ()=>{
+    setLoadingReviews(true); // Start loading
     const res = await fetch(reviews_url, {
       method: "GET"
     });
@@ -49,12 +57,18 @@ const Dealer = () => {
         setUnreviewed(true);
       }
     }
+    setLoadingReviews(false); //stop loading
+    setReviewPosted(false); //reset the state
   }
 
   const senti_icon = (sentiment)=>{
     let icon = sentiment === "positive"?positive_icon:sentiment==="negative"?negative_icon:neutral_icon;
     return icon;
   }
+
+  const handleReviewPosted = () => {
+    setReviewPosted(true);
+  };
 
   useEffect(() => {
     get_dealer();
@@ -64,7 +78,7 @@ const Dealer = () => {
 
       
     }
-  },[]);  
+  },[handleReviewPosted]);  
 
 
 return(
@@ -75,16 +89,21 @@ return(
       <h4  style={{color:"grey"}}>{dealer['city']},{dealer['address']}, Zip - {dealer['zip']}, {dealer['state']} </h4>
       </div>
       <div class="reviews_panel">
-      {reviews.length === 0 && unreviewed === false ? (
-        <text>Loading Reviews....</text>
-      ):  unreviewed === true? <div>No reviews yet! </div> :
-      reviews.map(review => (
-        <div className='review_panel'>
-          <img src={senti_icon(review.sentiment)} className="emotion_icon" alt='Sentiment'/>
-          <div className='review'>{review.review}</div>
-          <div className="reviewer">{review.name} {review.car_make} {review.car_model} {review.car_year}</div>
-        </div>
-      ))}
+      {loadingReviews ? (
+  <text>Loading Reviews....</text> // Display loading message while loading
+) : unreviewed ? (
+  <div>No reviews yet!</div> // Display "No reviews yet" when unreviewed is true
+) : (
+  reviews.map((review) => (
+    <div className="review_panel" key={review._id}>
+      <img src={senti_icon(review.sentiment)} className="emotion_icon" alt="Sentiment" />
+      <div className="review">{review.review}</div>
+      <div className="reviewer">
+        {review.name} {review.car_make} {review.car_model} {review.car_year}
+      </div>
+    </div>
+  ))
+)}
     </div>  
   </div>
 )
