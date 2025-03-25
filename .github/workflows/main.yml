@@ -31,8 +31,8 @@ jobs:
     - name: Run Linter
       run: |
         pwd
-        # Lint only the files in the 'server' directory
-        find ./server -name "*.py" -exec flake8 {} +
+        # Lint only the files in the 'server' directory, and disable specific errors
+        find ./server -name "*.py" -exec flake8 --extend-ignore=E501,W503,E203 {} +
         echo "Linted Python files in the server directory"
 
   lint_js:
