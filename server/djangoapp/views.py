@@ -7,7 +7,9 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 from .populate import initiate
 from djangoapp.models import CarMake, CarModel
-from djangoapp.restapis import get_request, analyze_review_sentiments, post_review
+from djangoapp.restapis import get_request, 
+from djangoapp.restapis import analyze_review_sentiments
+from djangoapp.restapis import post_review
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -105,7 +107,7 @@ def add_review(request):
         data = json.loads(request.body)
         try:
             response = post_review(data)
-            return JsonResponse({"status": 200, "dealer_id": response.get('dealer_id')})
+            return JsonResponse({"status": 200, "dealer": response.get('dealer_id')})
         except Exception as e:
             return JsonResponse({"status": 401, "message": str(e)})
     else:
@@ -120,5 +122,6 @@ def get_cars(request):
     car_models = CarModel.objects.select_related('car_make')
     cars = []
     for car_model in car_models:
-        cars.append({"CarModel": car_model.name, "CarMake": car_model.car_make.name})
+        cars.append({"CarModel": car_model.name, 
+        "CarMake": car_model.car_make.name})
     return JsonResponse({"CarModels": cars})
