@@ -107,7 +107,7 @@ def add_review(request):
         data = json.loads(request.body)
         try:
             response = post_review(data)
-            return JsonResponse({"status": 200, "dealer": response.get('dealer_id')})
+            return JsonResponse({"status": 200, "dealer_id": response.get('dealer_id')})
         except Exception as e:
             return JsonResponse({"status": 401, "message": str(e)})
     else:
