@@ -7,7 +7,7 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 from .populate import initiate
 from djangoapp.models import CarMake, CarModel
-from djangoapp.restapis import get_request, 
+from djangoapp.restapis import get_request
 from djangoapp.restapis import analyze_review_sentiments
 from djangoapp.restapis import post_review
 
