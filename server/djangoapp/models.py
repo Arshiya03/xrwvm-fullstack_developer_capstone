@@ -1,7 +1,9 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 
+
 # Create your models here.
+
 
 # Car Make model
 class CarMake(models.Model):
@@ -11,6 +13,7 @@ class CarMake(models.Model):
 
     def __str__(self):
         return self.name  # Return the name as the string representation
+
 
 # Car Model model
 class CarModel(models.Model):
